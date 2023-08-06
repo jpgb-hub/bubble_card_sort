@@ -91,29 +91,30 @@ document.addEventListener("DOMContentLoaded", function() {
       await bubbleSort(deck);
     });
 
-  function displayDeck(deck, i) {
-    const stepContainer = document.createElement("div");
-    stepContainer.classList.add("step-container");
-    stepContainer.classList.add("container");
-    stepContainer.id = `step-${i}`;
-    document.body.appendChild(stepContainer);
-    deck.forEach(card => displayCard(card, `#step-${i}`));
-  }
-
-  async function bubbleSort(deck) {
-    let len = deck.length;
-    for (let i = 0; i < len; i++) {
-      for (let j = 0; j < len - i - 1; j++) {
+  async function bubbleSort(deck, i = 0, j = 0, n = deck.length) {
+    if (i < n) {
+      if (j < n - i - 1) {
         if (compareCards(deck[j], deck[j + 1]) > 0) {
           let tmp = deck[j];
           deck[j] = deck[j + 1];
           deck[j + 1] = tmp;
-          displayDeck(deck, i);
+          removePreviousStep(i);
+          displayStep(deck, i);
           await new Promise(r => setTimeout(r, 500));
         }
+        bubbleSort(deck, i, j + 1, n);
+      } else {
+        bubbleSort(deck, i + 1, 0, n);
       }
+    } else {
+      const sortedCardContainer = document.querySelector(
+        ".sorted-card-container"
+      );
+      while (sortedCardContainer.firstChild) {
+        sortedCardContainer.firstChild.remove();
+      }
+      deck.forEach(card => displayCard(card, ".sorted-card-container"));
     }
-    displayDeck(deck, "sorted");
   }
 
   function compareCards(a, b) {
@@ -122,5 +123,20 @@ document.addEventListener("DOMContentLoaded", function() {
     if (numberAIndex < numberBIndex) return -1;
     if (numberAIndex > numberBIndex) return 1;
     return 0;
+  }
+
+  function removePreviousStep(i) {
+    const stepContainer = document.getElementById(`step-${i}`);
+    if (stepContainer) {
+      stepContainer.remove();
+    }
+  }
+
+  function displayStep(deck, i) {
+    const stepContainer = document.createElement("div");
+    stepContainer.classList.add("step-container");
+    stepContainer.id = `step-${i}`;
+    document.body.appendChild(stepContainer);
+    deck.forEach(card => displayCard(card, `#step-${i}`));
   }
 });
