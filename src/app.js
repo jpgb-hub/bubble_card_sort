@@ -1,6 +1,5 @@
 /* global Promise */
 /* eslint-disable */
-/* eslint-disable */
 import "bootstrap";
 import "./style.css";
 
@@ -92,12 +91,13 @@ document.addEventListener("DOMContentLoaded", function() {
       await bubbleSort(deck);
     });
 
-  function displayDeck(deck, containerSelector = ".card-container") {
-    const cardContainer = document.querySelector(containerSelector);
-    while (cardContainer.firstChild) {
-      cardContainer.firstChild.remove();
-    }
-    deck.forEach(card => displayCard(card, containerSelector));
+  function displayDeck(deck, i) {
+    const stepContainer = document.createElement("div");
+    stepContainer.classList.add("step-container");
+    stepContainer.classList.add("container");
+    stepContainer.id = `step-${i}`;
+    document.body.appendChild(stepContainer);
+    deck.forEach(card => displayCard(card, `#step-${i}`));
   }
 
   async function bubbleSort(deck) {
@@ -108,19 +108,19 @@ document.addEventListener("DOMContentLoaded", function() {
           let tmp = deck[j];
           deck[j] = deck[j + 1];
           deck[j + 1] = tmp;
-          await displayDeck(deck);
+          displayDeck(deck, i);
           await new Promise(r => setTimeout(r, 500));
         }
       }
     }
-    displayDeck(deck, ".sorted-card-container");
+    displayDeck(deck, "sorted");
   }
 
   function compareCards(a, b) {
     const numberAIndex = numbers.indexOf(a.number);
     const numberBIndex = numbers.indexOf(b.number);
-    if (numberAIndex < numberBIndex) return 1;
-    if (numberAIndex > numberBIndex) return -1;
+    if (numberAIndex < numberBIndex) return -1;
+    if (numberAIndex > numberBIndex) return 1;
     return 0;
   }
 });
